@@ -2,6 +2,7 @@ const router = require('express').Router()
 const adminCred = require('../Model/adminCred')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const verifyToken = require('../Middleware/verifyToken')
 router.post('/signup', (req, res) => {
   const sUname = req.body.sUname
   const sPass = req.body.sPass
@@ -16,7 +17,7 @@ router.post('/signup', (req, res) => {
     }
   })
 })
-router.post('/login', (req, res) => {
+router.post('/adminLogin', (req, res) => {
   const sUname = req.body.sUname
   const sPass = req.body.sPass
   adminCred.findOne({ sUname: sUname }, (err, result) => {
@@ -36,5 +37,15 @@ router.post('/login', (req, res) => {
     }
   }
   )
+})
+router.get('/adminData', verifyToken, (req, res) => {
+  const token = req.token.id
+  adminCred.find({ _id: token })
+    .then(result => {
+      res.json({ result })
+    })
+    .catch(err => {
+      res.json({ err })
+    })
 })
 module.exports = router
