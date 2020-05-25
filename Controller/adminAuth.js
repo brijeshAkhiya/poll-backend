@@ -42,7 +42,7 @@ router.get('/adminData', verifyToken, (req, res) => {
   const token = req.token.id
   adminCred.find({ _id: token })
     .then(result => {
-      res.json({ result })
+      res.send(result)
     })
     .catch(err => {
       res.json({ err })
