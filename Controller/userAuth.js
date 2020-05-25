@@ -1,12 +1,12 @@
 const router = require('express').Router()
-const userData = require('../Model/userData')
+const userCred = require('../Model/userData')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 router.post('/userSignup', (req, res) => {
   const sUname = req.body.sUname
   const sEmail = req.body.sEmail
   const sPass = req.body.sPass
-  userData.findOne({ $or: [{ sUname: sUname }, { sEmail: sEmail }] }, (err, result) => {
+  userCred.findOne({ $or: [{ sUname: sUname }, { sEmail: sEmail }] }, (err, result) => {
     if (err) {
       res.json({ err })
     }
@@ -18,7 +18,7 @@ router.post('/userSignup', (req, res) => {
         sEmail: sEmail,
         sPass: pass
       }
-      userData.insertMany(tempObj)
+      userCred.insertMany(tempObj)
       res.json({ message: 'User registered' })
     } else {
       res.json({ message: 'Username or Email already exists, please login!' })
@@ -29,7 +29,7 @@ router.post('/userSignup', (req, res) => {
 router.post('/userLogin', (req, res) => {
   const sUname = req.body.sUname
   const sPass = req.body.sPass
-  userData.findOne({ $or: [{ sUname: sUname }, { sEmail: sUname }] }, (err, result) => {
+  userCred.findOne({ $or: [{ sUname: sUname }, { sEmail: sUname }] }, (err, result) => {
     if (err) {
       res.json({ err })
     }

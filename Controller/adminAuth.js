@@ -47,5 +47,7 @@ router.get('/adminData', verifyToken, (req, res) => {
     .catch(err => {
       res.json({ err })
     })
+  const headers = req.header('Authorization')
+  const abc = jwt.decode(headers, 'secretKey')
 })
 module.exports = router
