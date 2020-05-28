@@ -4,7 +4,7 @@ const polldata = new mongoose.Schema({
     type: String,
     required: true
   },
-  backgroundPicture: {
+  backgroundImgPath: {
     type: String,
     required: true
   },
@@ -14,7 +14,18 @@ const polldata = new mongoose.Schema({
   },
   options: {
     required: true,
+    type: [Object]
+  },
+  answerStates: {
     type: [Object],
+    required: true
+  },
+  totalSubmission: {
+    type: Number,
+    required: true
+  },
+  expiryData: {
+    type: Date
   }
 })
 const pollData = mongoose.model('pollData', polldata)
