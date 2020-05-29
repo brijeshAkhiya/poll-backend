@@ -11,7 +11,7 @@ router.post('/publishPoll', verifyToken, (req, res) => {
   const answerStates = []
   const totalSubmission = 0
   for (const values in option) {
-    const tempObj1 = { option: option[values], percentage: 0 }
+    const tempObj1 = { option: option[values], submission: 0, percentage: 0 }
     answerStates.push(tempObj1)
   }
   const tempObj = {

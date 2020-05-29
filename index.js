@@ -20,4 +20,6 @@ app.use('/', userPollSubmission)
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html')
 })
-app.listen(process.env.PORT || serverPort)
+app.listen(process.env.PORT || serverPort, () => {
+  console.log('Listening on port ' + serverPort)
+})
