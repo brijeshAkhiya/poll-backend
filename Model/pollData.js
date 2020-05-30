@@ -12,10 +12,6 @@ const polldata = new mongoose.Schema({
     type: String,
     required: true
   },
-  options: {
-    required: true,
-    type: [Object]
-  },
   answerStates: {
     type: [Object],
     required: true

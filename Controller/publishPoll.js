@@ -17,7 +17,6 @@ router.post('/publishPoll', verifyToken, (req, res) => {
     publisherId: token,
     backgroundImgPath: backgroundImgPath,
     question: question,
-    options: option,
     expiryDate: expiryDate,
     answerStates: answerStates,
     totalSubmission: totalSubmission
