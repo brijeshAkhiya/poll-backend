@@ -17,6 +17,9 @@ router.post('/submitPollStates', (req, res) => {
         }
       })
       result.answerStates.forEach(values => { values.percentage = (values.submission / result.totalSubmission) * 100 })
+      result.answerStates.forEach(values => {
+        values.percentage = values.percentage.toFixed(2)
+      })
       tempArr = result.answerStates
       pollData.updateOne({ _id: pollId }, { answerStates: tempArr, totalSubmission: result.totalSubmission }, (err, result1) => {
         if (err) {

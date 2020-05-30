@@ -1,7 +1,6 @@
 const router = require('express').Router()
 const verifyToken = require('../Middleware/verifyToken')
 const pollData = require('../Model/pollData')
-// const pollStates = require('../Model/pollStates')
 router.post('/publishPoll', verifyToken, (req, res) => {
   const token = req.token.id
   const backgroundImgPath = req.body.backgroundImgPath
@@ -34,9 +33,59 @@ router.post('/publishPoll', verifyToken, (req, res) => {
 })
 router.get('/getAdminPollData', verifyToken, (req, res) => {
   const token = req.token.id
-  pollData.find({ publisherId: token }, (err, result) => {
+  // pollData.find({ publisherId: token }, (err, result) => {
+  //   if (err) {
+  //     res.send(err)
+  //   } else {
+  //     console.log(result)
+  //     res.send(result)
+  //   }
+  // })
+  pollData.aggregate([{
+    $match: {
+      publisherId: token
+    }
+  }, {
+    $unwind: {
+      path: '$answerStates'
+    }
+  }, {
+    $sort: {
+      'answerStates.percentage': -1
+    }
+  }, {
+    $group: {
+      _id: '$_id',
+      options: { $addToSet: '$options' },
+      answerStates: { $push: '$answerStates' },
+      publisherId: { $addToSet: '$publisherId' },
+      backgroundImgPath: { $addToSet: '$backgroundImgPath' },
+      question: { $addToSet: '$question' },
+      totalSubmission: { $addToSet: '$totalSubmission' }
+    }
+  }, {
+    $unwind: {
+      path: '$options'
+    }
+  }, {
+    $unwind: {
+      path: '$publisherId'
+    }
+  }, {
+    $unwind: {
+      path: '$backgroundImgPath'
+    }
+  }, {
+    $unwind: {
+      path: '$question'
+    }
+  }, {
+    $unwind: {
+      path: '$totalSubmission'
+    }
+  }], (err, result) => {
     if (err) {
-      res.send(err)
+      console.log(err)
     } else {
       res.send(result)
     }
