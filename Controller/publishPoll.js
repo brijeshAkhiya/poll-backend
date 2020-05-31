@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const verifyToken = require('../Middleware/verifyToken')
 const pollData = require('../Model/pollData')
+const userPollStates = require('../Model/userPollStates')
 router.post('/publishPoll', verifyToken, (req, res) => {
   const token = req.token.id
   const backgroundImgPath = req.body.backgroundImgPath
@@ -32,14 +33,6 @@ router.post('/publishPoll', verifyToken, (req, res) => {
 })
 router.get('/getAdminPollData', verifyToken, (req, res) => {
   const token = req.token.id
-  // pollData.find({ publisherId: token }, (err, result) => {
-  //   if (err) {
-  //     res.send(err)
-  //   } else {
-  //     console.log(result)
-  //     res.send(result)
-  //   }
-  // })
   pollData.aggregate([{
     $match: {
       publisherId: token
@@ -83,6 +76,24 @@ router.get('/getAdminPollData', verifyToken, (req, res) => {
       path: '$totalSubmission'
     }
   }], (err, result) => {
+    if (err) {
+      console.log(err)
+    } else {
+      res.send(result)
+    }
+  })
+})
+router.delete('/deletePoll', (req, res) => {
+  const pollId = req.body.pollId
+  // pollData.deleteOne({ _id: pollId }, (err, result) => {
+  //   if (err) {
+  //     console.log(err)
+  //   } else {
+  //     // res.send(result)
+  //     console.log(result)
+  //   }
+  // })
+  userPollStates.find({ pollsSubmitted: { $all: [pollId] } }, (err, result) => {
     if (err) {
       console.log(err)
     } else {
