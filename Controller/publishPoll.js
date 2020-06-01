@@ -85,19 +85,16 @@ router.get('/getAdminPollData', verifyToken, (req, res) => {
 })
 router.delete('/deletePoll', (req, res) => {
   const pollId = req.body.pollId
-  // pollData.deleteOne({ _id: pollId }, (err, result) => {
-  //   if (err) {
-  //     console.log(err)
-  //   } else {
-  //     // res.send(result)
-  //     console.log(result)
-  //   }
-  // })
-  userPollStates.find({ pollsSubmitted: { $all: [pollId] } }, (err, result) => {
+  pollData.deleteOne({ _id: pollId }, (err, result) => {
+    if (err) {
+      console.log(err)
+    }
+  })
+  userPollStates.updateMany({ pollsSubmitted: { $all: [pollId] } }, { $pull: { pollsSubmitted: pollId } }, (err, result) => {
     if (err) {
       console.log(err)
     } else {
-      res.send(result)
+      res.send({ message: 'Updated' })
     }
   })
 })
