@@ -27,7 +27,7 @@ router.post('/publishPoll', verifyToken, (req, res) => {
       console.log(err)
       res.send(err)
     } else {
-      res.send(result)
+      res.send({ message: 'Poll Published' })
     }
   })
 })
@@ -37,45 +37,48 @@ router.get('/getAdminPollData', verifyToken, (req, res) => {
     $match: {
       publisherId: token
     }
-  }, {
+  },
+  {
     $unwind: {
       path: '$answerStates'
     }
-  }, {
+  },
+  {
     $sort: {
       'answerStates.percentage': -1
     }
-  }, {
+  },
+  {
     $group: {
       _id: '$_id',
-      options: { $addToSet: '$options' },
       answerStates: { $push: '$answerStates' },
       publisherId: { $addToSet: '$publisherId' },
       backgroundImgPath: { $addToSet: '$backgroundImgPath' },
       question: { $addToSet: '$question' },
       totalSubmission: { $addToSet: '$totalSubmission' }
     }
-  }, {
-    $unwind: {
-      path: '$options'
-    }
-  }, {
+  },
+  {
     $unwind: {
       path: '$publisherId'
     }
-  }, {
+  },
+  {
     $unwind: {
       path: '$backgroundImgPath'
     }
-  }, {
+  },
+  {
     $unwind: {
       path: '$question'
     }
-  }, {
+  },
+  {
     $unwind: {
       path: '$totalSubmission'
     }
-  }], (err, result) => {
+  }
+  ], (err, result) => {
     if (err) {
       console.log(err)
     } else {
@@ -83,18 +86,20 @@ router.get('/getAdminPollData', verifyToken, (req, res) => {
     }
   })
 })
-router.delete('/deletePoll', (req, res) => {
+router.post('/deletePoll', (req, res) => {
   const pollId = req.body.pollId
   pollData.deleteOne({ _id: pollId }, (err, result) => {
     if (err) {
       console.log(err)
+    } else {
+      res.send({ message: 'Poll Deleted' })
     }
   })
   userPollStates.updateMany({ pollsSubmitted: { $all: [pollId] } }, { $pull: { pollsSubmitted: pollId } }, (err, result) => {
     if (err) {
       console.log(err)
     } else {
-      res.send({ message: 'Updated' })
+      // console.log(result)
     }
   })
 })
