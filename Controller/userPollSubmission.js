@@ -67,6 +67,7 @@ router.post('/userSubmission', verifyToken, (req, res) => {
 })
 router.get('/userPollData', verifyToken, (req, res) => {
   const demoArr = []
+  const demoArr1 = []
   const token = req.token.id
   pollData.find({}, (err, result) => {
     if (err) {
@@ -76,13 +77,19 @@ router.get('/userPollData', verifyToken, (req, res) => {
         if (err) {
           res.send(err)
         } else {
-          result.forEach(element => {
-            if (result1[0].pollsSubmitted.includes(element._id)) {
-            } else {
-              demoArr.push(element)
-            }
-          })
-          res.send(demoArr[0])
+          if (result1.length === 0) {
+            demoArr1.push(result[0])
+            res.send(demoArr1)
+          } else {
+            result.forEach(element => {
+              if (result1[0].pollsSubmitted.includes(element._id)) {
+              } else {
+                demoArr.push(element)
+              }
+            })
+            demoArr1.push(demoArr[0])
+            res.send(demoArr1)
+          }
         }
       })
     }

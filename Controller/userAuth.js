@@ -2,6 +2,7 @@ const router = require('express').Router()
 const userCred = require('../Model/userData')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const verifyToken = require('../Middleware/verifyToken')
 router.post('/userSignup', (req, res) => {
   const sUname = req.body.sUname
   const sEmail = req.body.sEmail
@@ -45,5 +46,15 @@ router.post('/userLogin', (req, res) => {
       }
     }
   })
+})
+router.get('/getUserData', verifyToken, (req, res) => {
+  const token = req.token.id
+  userCred.find({ _id: token })
+    .then(result => {
+      res.send(result)
+    })
+    .catch(err => {
+      console.log(err)
+    })
 })
 module.exports = router
