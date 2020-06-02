@@ -10,15 +10,6 @@ router.post('/publishPoll', verifyToken, (req, res) => {
   const expiryDate = req.body.expiryDate
   const answerStates = []
   const totalSubmission = 0
-  // let date = new Date()
-  // date = date.toISOString().slice(0, 10)
-  // pollData.deleteMany({ expiryDate: date }, (err, result) => {
-  //   if (err) {
-  //     console.log(err)
-  //   } else {
-  //     console.log(result)
-  //   }
-  // })
   for (const values in option) {
     const tempObj1 = { option: option[values], submission: 0, percentage: 0 }
     answerStates.push(tempObj1)
@@ -43,6 +34,15 @@ router.post('/publishPoll', verifyToken, (req, res) => {
 })
 router.get('/getAdminPollData', verifyToken, (req, res) => {
   const token = req.token.id
+  let date = new Date()
+  date = date.toISOString().slice(0, 10)
+  pollData.deleteMany({ expiryDate: date }, (err, result) => {
+    if (err) {
+      console.log(err)
+    } else {
+      console.log(result)
+    }
+  })
   pollData.aggregate([{
     $match: {
       publisherId: token

@@ -69,6 +69,15 @@ router.get('/userPollData', verifyToken, (req, res) => {
   const demoArr = []
   const demoArr1 = []
   const token = req.token.id
+  let date = new Date()
+  date = date.toISOString().slice(0, 10)
+  pollData.deleteMany({ expiryDate: date }, (err, result) => {
+    if (err) {
+      console.log(err)
+    } else {
+      console.log(result)
+    }
+  })
   pollData.find({}, (err, result) => {
     if (err) {
       res.send(err)
