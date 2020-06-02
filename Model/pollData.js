@@ -20,8 +20,8 @@ const polldata = new mongoose.Schema({
     type: Number,
     required: true
   },
-  expiryData: {
-    type: Date
+  expiryDate: {
+    type: String
   }
 })
 const pollData = mongoose.model('pollData', polldata)

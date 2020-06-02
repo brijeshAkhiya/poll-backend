@@ -10,6 +10,15 @@ router.post('/publishPoll', verifyToken, (req, res) => {
   const expiryDate = req.body.expiryDate
   const answerStates = []
   const totalSubmission = 0
+  // let date = new Date()
+  // date = date.toISOString().slice(0, 10)
+  // pollData.deleteMany({ expiryDate: date }, (err, result) => {
+  //   if (err) {
+  //     console.log(err)
+  //   } else {
+  //     console.log(result)
+  //   }
+  // })
   for (const values in option) {
     const tempObj1 = { option: option[values], submission: 0, percentage: 0 }
     answerStates.push(tempObj1)
@@ -27,6 +36,7 @@ router.post('/publishPoll', verifyToken, (req, res) => {
       console.log(err)
       res.send(err)
     } else {
+      console.log(result)
       res.send({ message: 'Poll Published' })
     }
   })

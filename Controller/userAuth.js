@@ -7,6 +7,7 @@ router.post('/userSignup', (req, res) => {
   const sUname = req.body.sUname
   const sEmail = req.body.sEmail
   const sPass = req.body.sPass
+
   userCred.findOne({ $or: [{ sUname: sUname }, { sEmail: sEmail }] }, (err, result) => {
     if (err) {
       res.json({ err })

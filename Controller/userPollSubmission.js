@@ -2,6 +2,7 @@ const router = require('express').Router()
 const pollData = require('../Model/pollData')
 const verifyToken = require('../Middleware/verifyToken')
 const userPollStates = require('../Model/userPollStates')
+
 router.post('/submitPollStates', (req, res) => {
   const pollId = req.body.pollId
   const selectedOption = req.body.selectedOption
@@ -25,7 +26,9 @@ router.post('/submitPollStates', (req, res) => {
         if (err) {
           res.send(err)
         } else {
-          res.send(result)
+          tempArr = []
+          tempArr.push(result)
+          res.send(tempArr)
         }
       })
     }
@@ -47,7 +50,7 @@ router.post('/userSubmission', verifyToken, (req, res) => {
           if (err) {
             console.log(err)
           } else {
-            res.send(result1)
+            // res.send(result1)
           }
         })
       } else {
@@ -56,9 +59,9 @@ router.post('/userSubmission', verifyToken, (req, res) => {
         tempArr.push(pollId)
         userPollStates.updateOne({ userId: token }, { pollsSubmitted: tempArr }, (err, result2) => {
           if (err) {
-            res.send(err)
+            // res.send(err)
           } else {
-            res.send(result2)
+            // res.send(result2)
           }
         })
       }
