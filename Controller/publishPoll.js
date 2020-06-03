@@ -1,7 +1,9 @@
+// All the requirement
 const router = require('express').Router()
 const verifyToken = require('../Middleware/verifyToken')
 const pollData = require('../Model/pollData')
 const userPollStates = require('../Model/userPollStates')
+// This is for when admin publishes the poll
 router.post('/publishPoll', verifyToken, (req, res) => {
   const token = req.token.id
   const backgroundImgPath = req.body.backgroundImgPath
