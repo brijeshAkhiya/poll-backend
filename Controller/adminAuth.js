@@ -3,6 +3,9 @@ const adminCred = require('../Model/adminCred')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const verifyToken = require('../Middleware/verifyToken')
+
+// admin signup
+
 router.post('/signup', (req, res) => {
   const sUname = req.body.sUname
   const sPass = req.body.sPass

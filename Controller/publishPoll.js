@@ -12,6 +12,7 @@ router.post('/publishPoll', verifyToken, (req, res) => {
   const expiryDate = req.body.expiryDate
   const answerStates = []
   const totalSubmission = 0
+  // This is for formatting according to schema
   for (const values in option) {
     const tempObj1 = { option: option[values], submission: 0, percentage: 0 }
     answerStates.push(tempObj1)
@@ -34,6 +35,9 @@ router.post('/publishPoll', verifyToken, (req, res) => {
     }
   })
 })
+
+// This is for admin getting his own published poll with the states
+
 router.get('/getAdminPollData', verifyToken, (req, res) => {
   const token = req.token.id
   let date = new Date()
@@ -98,6 +102,7 @@ router.get('/getAdminPollData', verifyToken, (req, res) => {
     }
   })
 })
+// This is for admin delete poll
 router.post('/deletePoll', (req, res) => {
   const pollId = req.body.pollId
   pollData.deleteOne({ _id: pollId }, (err, result) => {
