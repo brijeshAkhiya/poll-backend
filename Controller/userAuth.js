@@ -36,7 +36,7 @@ router.post('/userLogin', (req, res) => {
       res.json({ err })
     }
     if (result === null) {
-      res.json({ message: 'No User Exists' })
+      res.json({ message: 'Username doesn\'t exist' })
     } else {
       const x = bcrypt.compareSync(sPass, result.sPass)
       if (x) {
