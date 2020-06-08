@@ -75,7 +75,6 @@ router.get('/userPollData', verifyToken, (req, res) => {
     if (err) {
       console.log(err)
     } else {
-      console.log(result)
     }
   })
   pollData.find({}, (err, result) => {
@@ -96,8 +95,12 @@ router.get('/userPollData', verifyToken, (req, res) => {
                 demoArr.push(element)
               }
             })
-            demoArr1.push(demoArr[0])
-            res.send(demoArr1)
+            if (demoArr.length === 0) {
+              res.send({ message: 'You\'ve answered all the polls' })
+            } else {
+              demoArr1.push(demoArr[0])
+              res.send(demoArr1)
+            }
           }
         }
       })
