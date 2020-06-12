@@ -23,7 +23,7 @@ router.post('/userSignup', (req, res) => {
       userCred.insertMany(tempObj)
       res.json({ message: 'User registered' })
     } else {
-      res.json({ message: 'Username or Email already exists' })
+      res.json({ eMessage: 'Username or Email already exists' })
     }
   })
 })
