@@ -103,6 +103,11 @@ router.get('/getAdminPollData', verifyToken, (req, res) => {
       ],
       as: 'creds'
     }
+  },
+  {
+    $unwind: {
+      path: '$creds'
+    }
   }, {
     $addFields: {
       sUname: '$creds.sUname'
