@@ -3,6 +3,7 @@ const router = require('express').Router()
 const verifyToken = require('../Middleware/verifyToken')
 const pollData = require('../Model/pollData')
 const userPollStates = require('../Model/userPollStates')
+const ObjectId = require('mongodb').ObjectID
 // This is for when admin publishes the poll
 router.post('/publishPoll', verifyToken, (req, res) => {
   const token = req.token.id
@@ -61,7 +62,7 @@ router.get('/getAdminPollData', verifyToken, (req, res) => {
   },
   {
     $sort: {
-      'answerStates.percentage': -1
+      'answerStates.submission': -1
     }
   },
   {
@@ -92,6 +93,19 @@ router.get('/getAdminPollData', verifyToken, (req, res) => {
   {
     $unwind: {
       path: '$totalSubmission'
+    }
+  },
+  {
+    $lookup: {
+      from: 'admincreds',
+      pipeline: [
+        { $match: { _id: ObjectId('5ecba841a9c5f702c4314d5b') } }
+      ],
+      as: 'creds'
+    }
+  }, {
+    $unwind: {
+      path: '$creds'
     }
   }
   ], (err, result) => {
