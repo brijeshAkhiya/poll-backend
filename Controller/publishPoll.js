@@ -61,7 +61,7 @@ router.get('/getAdminPollData', verifyToken, (req, res) => {
   },
   {
     $sort: {
-      'answerStates.percentage': -1
+      'answerStates.submission': -1
     }
   },
   {
