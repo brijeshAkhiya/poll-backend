@@ -103,6 +103,14 @@ router.get('/getAdminPollData', verifyToken, (req, res) => {
       ],
       as: 'creds'
     }
+  }, {
+    $addFields: {
+      sUname: '$creds.sUname'
+    }
+  }, {
+    $project: {
+      creds: 0
+    }
   }
   ], (err, result) => {
     if (err) {
