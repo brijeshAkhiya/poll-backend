@@ -103,10 +103,6 @@ router.get('/getAdminPollData', verifyToken, (req, res) => {
       ],
       as: 'creds'
     }
-  }, {
-    $unwind: {
-      path: '$creds'
-    }
   }
   ], (err, result) => {
     if (err) {
