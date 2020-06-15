@@ -99,7 +99,7 @@ router.get('/getAdminPollData', verifyToken, (req, res) => {
     $lookup: {
       from: 'admincreds',
       pipeline: [
-        { $match: { _id: ObjectId('5ecba841a9c5f702c4314d5b') } }
+        { $match: { _id: ObjectId(this.token) } }
       ],
       as: 'creds'
     }
