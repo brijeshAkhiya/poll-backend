@@ -1,17 +1,68 @@
-const router = require('express').Router()
+const bcrypt = require('bcrypt')
+const userCred = require('../Model/userData')
+const jwt = require('jsonwebtoken')
 const pollData = require('../Model/pollData')
-const verifyToken = require('../Middleware/verifyToken')
 const userPollStates = require('../Model/userPollStates')
-router.post('/submitPollStates', (req, res) => {
-  const pollId = req.body.pollId
-  const selectedOption = req.body.selectedOption
+const userContoller = {}
+userContoller.userSignup = (req, res) => {
+  userCred.findOne({ $or: [{ sUname: req.body.sUname }, { sEmail: req.body.sEmail }] }, (err, result) => {
+    if (err) {
+      res.json({ err })
+    }
+    if (result == null) {
+      const salt = bcrypt.genSaltSync(10)
+      const pass = bcrypt.hashSync(req.body.sPass, salt)
+      const tempObj = {
+        sUname: req.body.sUname,
+        sEmail: req.body.sEmail,
+        sPass: pass
+      }
+      userCred.insertMany(tempObj)
+      res.json({ message: 'User registered' })
+    } else {
+      res.json({ eMessage: 'Username or Email already exists' })
+    }
+  })
+}
+
+userContoller.userLogin = (req, res) => {
+  userCred.findOne({ $or: [{ sUname: req.body.sUname }, { sEmail: req.body.sUname }] }, (err, result) => {
+    if (err) {
+      res.json({ err })
+    }
+    if (result === null) {
+      res.json({ message: 'Username doesn\'t exist' })
+    } else {
+      const x = bcrypt.compareSync(req.body.sPass, result.sPass)
+      if (x) {
+        const token = jwt.sign({ id: result._id }, 'secretKey')
+        res.json({ token })
+      } else {
+        res.json({ message: 'Password Incorrect' })
+      }
+    }
+  })
+}
+
+userContoller.getUserData = (req, res) => {
+  const token = req.token.id
+  userCred.find({ _id: token })
+    .then(result => {
+      res.send(result)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+}
+
+userContoller.submitPollStates = (req, res) => {
   let tempArr = []
-  pollData.findOne({ _id: pollId }, (err, result) => {
+  pollData.findOne({ _id: req.body.pollId }, (err, result) => {
     if (err) {
       res.send(err)
     } else {
       result.answerStates.forEach(values => {
-        if (selectedOption === values.option) {
+        if (req.body.selectedOption === values.option) {
           values.submission++
           result.totalSubmission++
         }
@@ -21,7 +72,7 @@ router.post('/submitPollStates', (req, res) => {
         values.percentage = values.percentage.toFixed(2)
       })
       tempArr = result.answerStates
-      pollData.updateOne({ _id: pollId }, { answerStates: tempArr, totalSubmission: result.totalSubmission }, (err, result1) => {
+      pollData.updateOne({ _id: req.body.pollId }, { answerStates: tempArr, totalSubmission: result.totalSubmission }, (err, result1) => {
         if (err) {
           res.send(err)
         } else {
@@ -30,13 +81,14 @@ router.post('/submitPollStates', (req, res) => {
       })
     }
   })
-})
-router.post('/userSubmission', verifyToken, (req, res) => {
+}
+
+userContoller.userSubmission = (req, res, next) => {
   const token = req.token.id
-  const pollId = req.body.pollId
+  // const pollId = req.body.pollId
   const tempObj = {
     userId: token,
-    pollsSubmitted: pollId
+    pollsSubmitted: req.body.pollId
   }
   userPollStates.findOne({ userId: token }, (err, result) => {
     if (err) {
@@ -53,7 +105,7 @@ router.post('/userSubmission', verifyToken, (req, res) => {
       } else {
         let tempArr = []
         tempArr = result.pollsSubmitted
-        tempArr.push(pollId)
+        tempArr.push(req.body.pollId)
         userPollStates.updateOne({ userId: token }, { pollsSubmitted: tempArr }, (err, result2) => {
           if (err) {
             // res.send(err)
@@ -64,8 +116,9 @@ router.post('/userSubmission', verifyToken, (req, res) => {
       }
     }
   })
-})
-router.get('/userPollData', verifyToken, (req, res) => {
+}
+
+userContoller.userPollData = (req, res) => {
   const demoArr = []
   const demoArr1 = []
   const token = req.token.id
@@ -106,5 +159,6 @@ router.get('/userPollData', verifyToken, (req, res) => {
       })
     }
   })
-})
-module.exports = router
+}
+
+module.exports = userContoller

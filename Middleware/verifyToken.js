@@ -7,8 +7,8 @@ const verifyToken = (req, res, next) => {
       console.log(err)
     } else {
       req.token = result
+      next()
     }
   })
-  next()
 }
 module.exports = verifyToken
