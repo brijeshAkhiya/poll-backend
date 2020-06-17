@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken')
-const verifyToken = (req, res, next) => {
+const middleware = {}
+
+middleware.verifyToken = (req, res, next) => {
   // eslint-disable-next-line dot-notation
   const token = req.header('Authorization')
   jwt.verify(token, 'secretKey', (err, result) => {
@@ -11,4 +13,4 @@ const verifyToken = (req, res, next) => {
     }
   })
 }
-module.exports = verifyToken
+module.exports = middleware

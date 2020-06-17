@@ -1,14 +1,8 @@
-const app = {}
-
-const express = require('express')
-const cors = require('cors')
-const bodyParser = require('body-parser')
+const router = require('express').Router()
 const adminRoute = require('./Admin')
+const userRoute = require('./User')
 
-app.use(express.urlencoded())
-app.use(cors())
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
-app.use('/', adminRoute)
+router.use('/', adminRoute)
+router.use('/', userRoute)
 
-module.exports = app
+module.exports = router

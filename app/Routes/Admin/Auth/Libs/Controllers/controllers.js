@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt')
-const adminCred = require('../../../../Model/adminCred')
+const adminCred = require('../../../../../Model/adminCred')
 const jwt = require('jsonwebtoken')
-
+require('../../../../../../env')
 const controllers = {}
 controllers.adminSignup = function (req, res) {
   const salt = bcrypt.genSaltSync(10)
@@ -25,7 +25,7 @@ controllers.adminLogin = (req, res) => {
     } else {
       const x = bcrypt.compareSync(req.body.sPass, result.sPass)
       if (x) {
-        const token = jwt.sign({ id: result._id }, 'secretKey')
+        const token = jwt.sign({ id: result._id }, process.env.JWT_KEY)
         res.json({ token })
       } else {
         res.json({ message: 'Password Incorrect' })

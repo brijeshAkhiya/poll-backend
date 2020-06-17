@@ -1,50 +1,9 @@
-const bcrypt = require('bcrypt')
-const userCred = require('../../../../Model/userData')
-const jwt = require('jsonwebtoken')
-const pollData = require('../../../../Model/pollData')
-const userPollStates = require('../../../../Model/userPollStates')
-const userContoller = {}
-userContoller.userSignup = (req, res) => {
-  userCred.findOne({ $or: [{ sUname: req.body.sUname }, { sEmail: req.body.sEmail }] }, (err, result) => {
-    if (err) {
-      res.json({ err })
-    }
-    if (result == null) {
-      const salt = bcrypt.genSaltSync(10)
-      const pass = bcrypt.hashSync(req.body.sPass, salt)
-      const tempObj = {
-        sUname: req.body.sUname,
-        sEmail: req.body.sEmail,
-        sPass: pass
-      }
-      userCred.insertMany(tempObj)
-      res.json({ message: 'User registered' })
-    } else {
-      res.json({ eMessage: 'Username or Email already exists' })
-    }
-  })
-}
+const userCred = require('../../../../../Model/userData')
+const pollData = require('../../../../../Model/pollData')
+const userPollStates = require('../../../../../Model/userPollStates')
+const controller = {}
 
-userContoller.userLogin = (req, res) => {
-  userCred.findOne({ $or: [{ sUname: req.body.sUname }, { sEmail: req.body.sUname }] }, (err, result) => {
-    if (err) {
-      res.json({ err })
-    }
-    if (result === null) {
-      res.json({ message: 'Username doesn\'t exist' })
-    } else {
-      const x = bcrypt.compareSync(req.body.sPass, result.sPass)
-      if (x) {
-        const token = jwt.sign({ id: result._id }, 'secretKey')
-        res.json({ token })
-      } else {
-        res.json({ message: 'Password Incorrect' })
-      }
-    }
-  })
-}
-
-userContoller.getUserData = (req, res) => {
+controller.getUserData = (req, res) => {
   const token = req.token.id
   userCred.find({ _id: token })
     .then(result => {
@@ -55,7 +14,7 @@ userContoller.getUserData = (req, res) => {
     })
 }
 
-userContoller.submitPollStates = (req, res) => {
+controller.submitPollStates = (req, res) => {
   let tempArr = []
   pollData.findOne({ _id: req.body.pollId }, (err, result) => {
     if (err) {
@@ -76,14 +35,14 @@ userContoller.submitPollStates = (req, res) => {
         if (err) {
           res.send(err)
         } else {
-          res.send(result)
+          res.send({ data: result })
         }
       })
     }
   })
 }
 
-userContoller.userSubmission = (req, res, next) => {
+controller.userSubmission = (req, res, next) => {
   const token = req.token.id
   // const pollId = req.body.pollId
   const tempObj = {
@@ -92,7 +51,7 @@ userContoller.userSubmission = (req, res, next) => {
   }
   userPollStates.findOne({ userId: token }, (err, result) => {
     if (err) {
-      res.send(result)
+      res.send({ data: result })
     } else {
       if (result === null) {
         userPollStates.insertMany(tempObj, (err, result1) => {
@@ -118,7 +77,7 @@ userContoller.userSubmission = (req, res, next) => {
   })
 }
 
-userContoller.userPollData = (req, res) => {
+controller.userPollData = (req, res) => {
   const demoArr = []
   const demoArr1 = []
   const token = req.token.id
@@ -140,7 +99,7 @@ userContoller.userPollData = (req, res) => {
         } else {
           if (result1.length === 0) {
             demoArr1.push(result[0])
-            res.send(demoArr1)
+            res.send({ data: demoArr1 })
           } else {
             result.forEach(element => {
               if (result1[0].pollsSubmitted.includes(element._id)) {
@@ -152,7 +111,7 @@ userContoller.userPollData = (req, res) => {
               res.send({ message: 'You\'ve answered all the polls' })
             } else {
               demoArr1.push(demoArr[0])
-              res.send(demoArr1)
+              res.send({ data: demoArr1 })
             }
           }
         }
@@ -161,4 +120,4 @@ userContoller.userPollData = (req, res) => {
   })
 }
 
-module.exports = userContoller
+module.exports = controller

@@ -1,6 +1,7 @@
-const pollData = require('../../../../Model/pollData')
+const pollData = require('../../../../../Model/pollData')
+const adminCred = require('../../../../../Model/adminCred')
 const ObjectId = require('mongodb').ObjectId
-const userPollStates = require('../../../../Model/userPollStates')
+const userPollStates = require('../../../../../Model/userPollStates')
 const controllers = {}
 
 controllers.getAdminPollData = (req, res) => {
@@ -85,7 +86,17 @@ controllers.getAdminPollData = (req, res) => {
     if (err) {
       res.send({ error: 'Something went wrong!' })
     } else {
-      res.send({ data: result })
+      if (result.length === 0) {
+        adminCred.find({ _id: req.token.id }, (err, result) => {
+          if (err) {
+            res.send({ error: 'Something went wrong!' })
+          } else {
+            res.send({ data: result })
+          }
+        })
+      } else {
+        res.send({ data: result })
+      }
     }
   })
 }
