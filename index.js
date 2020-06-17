@@ -1,17 +1,19 @@
 /* eslint-disable no-path-concat */
-require('./DB/mongooseConnection')
+require('./app/DB/mongooseConnection')
 const express = require('express')
 const cors = require('cors')
 const app = express()
 const { app: { serverPort } } = require('./Config/config')
-const routes = require('./Routes/routes')
+const adminService = require('./app/Routes/Admin/index')
+const userService = require('./app/Routes/User/index')
 
 const bodyParser = require('body-parser')
 app.use(express.urlencoded())
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-app.use('/', routes)
+app.use('/', adminService)
+app.use('/', userService)
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html')
 })

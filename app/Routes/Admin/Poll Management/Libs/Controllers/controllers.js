@@ -1,43 +1,9 @@
-// All the requires for backend
-const bcrypt = require('bcrypt')
-const adminCred = require('../Model/adminCred')
-const jwt = require('jsonwebtoken')
-const pollData = require('../Model/pollData')
+const pollData = require('../../../../Model/pollData')
 const ObjectId = require('mongodb').ObjectId
-const userPollStates = require('../Model/userPollStates')
-const adminControllers = {}
-adminControllers.adminSignup = (req, res) => {
-  const salt = bcrypt.genSaltSync(10)
-  const tempObj = { sUname: req.body.sUname, sPass: bcrypt.hashSync(req.body.sPass, salt) }
-  adminCred.insertMany(tempObj, (err, result) => {
-    if (err) {
-      res.send(err)
-    } else {
-      res.send(result)
-    }
-  })
-}
+const userPollStates = require('../../../../Model/userPollStates')
+const controllers = {}
 
-adminControllers.adminLogin = (req, res) => {
-  adminCred.findOne({ sUname: req.body.sUname }, (err, result) => {
-    if (err) {
-      res.json({ err })
-    }
-    if (result == null) {
-      res.json({ message: 'Username doesn\'t exist' })
-    } else {
-      const x = bcrypt.compareSync(req.body.sPass, result.sPass)
-      if (x) {
-        const token = jwt.sign({ id: result._id }, 'secretKey')
-        res.json({ token })
-      } else {
-        res.json({ message: 'Password Incorrect' })
-      }
-    }
-  })
-}
-
-adminControllers.getAdminPollData = (req, res) => {
+controllers.getAdminPollData = (req, res) => {
   let date = new Date()
   date = date.toISOString().slice(0, 10)
   pollData.deleteMany({ expiryDate: date }, (err, result) => {
@@ -117,14 +83,14 @@ adminControllers.getAdminPollData = (req, res) => {
   ]
   pollData.aggregate(query, (err, result) => {
     if (err) {
-      console.log(err)
+      res.send({ error: 'Something went wrong!' })
     } else {
-      res.send(result)
+      res.send({ data: result })
     }
   })
 }
 
-adminControllers.publishPoll = (req, res) => {
+controllers.publishPoll = (req, res) => {
   const backgroundImgPath = req.body.backgroundImgPath
   const question = req.body.question
   const option = req.body.options
@@ -155,7 +121,7 @@ adminControllers.publishPoll = (req, res) => {
   })
 }
 
-adminControllers.deletePoll = (req, res) => {
+controllers.deletePoll = (req, res) => {
   const pollId = req.body.pollId
   pollData.deleteOne({ _id: pollId }, (err) => {
     if (err) {
@@ -173,4 +139,4 @@ adminControllers.deletePoll = (req, res) => {
   })
 }
 
-module.exports = adminControllers
+module.exports = controllers

@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt')
-const userCred = require('../Model/userData')
+const userCred = require('../../../../Model/userData')
 const jwt = require('jsonwebtoken')
-const pollData = require('../Model/pollData')
-const userPollStates = require('../Model/userPollStates')
+const pollData = require('../../../../Model/pollData')
+const userPollStates = require('../../../../Model/userPollStates')
 const userContoller = {}
 userContoller.userSignup = (req, res) => {
   userCred.findOne({ $or: [{ sUname: req.body.sUname }, { sEmail: req.body.sEmail }] }, (err, result) => {
