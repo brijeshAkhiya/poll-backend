@@ -41,6 +41,7 @@ controller.userLogin = (req, res) => {
         const x = bcrypt.compareSync(req.body.sPass, result.sPass)
         if (x) {
           const token = jwt.sign({ id: result._id }, process.env.JWT_KEY)
+          userCred.update({ _id: result._id }, { token: token }, { upsert: true })
           res.json({ token })
         } else {
           res.json({ message: 'Password Incorrect' })

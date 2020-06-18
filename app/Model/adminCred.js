@@ -8,6 +8,9 @@ const admincred = new mongoose.Schema({
   sPass: {
     type: String,
     required: true
+  },
+  token: {
+    type: String
   }
 })
 const adminCred = mongoose.model('adminCred', admincred)

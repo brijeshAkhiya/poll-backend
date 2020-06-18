@@ -11,6 +11,9 @@ const usercred = new mongoose.Schema({
   sPass: {
     type: String,
     required: true
+  },
+  token: {
+    type: String
   }
 })
 const userCred = mongoose.model('userCred', usercred)
