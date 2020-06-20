@@ -23,7 +23,7 @@ controllers.adminLogin = (req, res) => {
   try {
     adminCred.findOne({ sUname: req.body.sUname }, (err, result) => {
       if (err) {
-        res.json({ err })
+        res.send({ error: 'Something went wrong!' })
       }
       if (result == null) {
         res.json({ message: 'Username doesn\'t exist' })
@@ -38,9 +38,22 @@ controllers.adminLogin = (req, res) => {
         }
       }
     })
+    return {}
+  } catch (error) {
+  }
+}
+
+controllers.getAdminData = (req, res) => {
+  try {
+    adminCred.find({ _id: req.token.id }, (err, result) => {
+      if (err) {
+        res.send({ error: 'Something went wrong!' })
+      } else {
+        res.send({ data: result })
+      }
+    })
   } catch (error) {
     return {}
   }
 }
-
 module.exports = controllers
