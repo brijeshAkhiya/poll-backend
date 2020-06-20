@@ -1,6 +1,5 @@
 const pollData = require('../../../../../Model/pollData')
 const adminCred = require('../../../../../Model/adminCred')
-const ObjectId = require('mongodb').ObjectId
 const userPollStates = require('../../../../../Model/userPollStates')
 const controllers = {}
 
@@ -8,13 +7,7 @@ controllers.getAdminPollData = (req, res) => {
   let date = new Date()
   date = date.toISOString().slice(0, 10)
   try {
-    pollData.deleteMany({ expiryDate: date }, (err, result) => {
-      if (err) {
-        console.log(err)
-      } else {
-        console.log(result)
-      }
-    })
+    pollData.deleteMany({ expiryDate: date })
     const query = [{
       $match: {
         publisherId: req.token.id
@@ -61,25 +54,8 @@ controllers.getAdminPollData = (req, res) => {
       }
     },
     {
-      $lookup: {
-        from: 'admincreds',
-        pipeline: [
-          { $match: { _id: ObjectId(req.token.id) } }
-        ],
-        as: 'creds'
-      }
-    },
-    {
-      $unwind: {
-        path: '$creds'
-      }
-    }, {
-      $addFields: {
-        sUname: '$creds.sUname'
-      }
-    }, {
-      $project: {
-        creds: 0
+      $sort: {
+        totalSubmission: -1
       }
     }
     ]
