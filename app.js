@@ -7,6 +7,7 @@ app.use(cors())
 const route = require('./app/Routes')
 // eslint-disable-next-line no-path-concat
 app.use(express.static('./public'))
+app.use(express.static('./public/Images'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use('/', route)
