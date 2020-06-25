@@ -12,4 +12,5 @@ middleware.verifyToken = (req, res, next) => {
     }
   })
 }
+
 module.exports = middleware

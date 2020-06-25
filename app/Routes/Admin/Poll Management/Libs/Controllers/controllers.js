@@ -2,6 +2,8 @@ const pollData = require('../../../../../Model/pollData')
 const adminCred = require('../../../../../Model/adminCred')
 const userPollStates = require('../../../../../Model/userPollStates')
 const controllers = {}
+const cloudinary = require('cloudinary').v2
+require('../../../../../../env')
 
 controllers.getAdminPollData = (req, res) => {
   let date = new Date()
@@ -83,10 +85,11 @@ controllers.getAdminPollData = (req, res) => {
 
 controllers.publishPoll = (req, res) => {
   try {
-    const backgroundImgPath = req.body.backgroundImgPath
-    const question = req.body.question
-    const option = req.body.options
-    const expiryDate = req.body.expiryDate
+    let file = req.file
+    const question = req.body.sQuestion
+    let option = req.body.options
+    option = option.split(',')
+    const expiryDate = req.body.dDate
     const answerStates = []
     const totalSubmission = 0
     // This is for formatting according to schema
@@ -94,23 +97,49 @@ controllers.publishPoll = (req, res) => {
       const tempObj1 = { option: option[values], submission: 0, percentage: 0 }
       answerStates.push(tempObj1)
     }
-    const tempObj = {
-      publisherId: req.token.id,
-      backgroundImgPath: backgroundImgPath,
-      question: question,
-      expiryDate: expiryDate,
-      answerStates: answerStates,
-      totalSubmission: totalSubmission
-    }
-    pollData.insertMany(tempObj, (err, result) => {
-      if (err) {
-        console.log(err)
-        res.send(err)
-      } else {
-        console.log(result)
-        res.send({ message: 'Poll Published' })
+    if (req.body.file) {
+      file = req.body.file
+      const tempObj = {
+        publisherId: req.token.id,
+        backgroundImgPath: file,
+        question: question,
+        expiryDate: expiryDate,
+        answerStates: answerStates,
+        totalSubmission: totalSubmission
       }
-    })
+      pollData.insertMany(tempObj, (err, result) => {
+        if (err) {
+          res.send({ error: 'Something went wrong!!' })
+        } else {
+          res.send({ message: 'Poll Published' })
+        }
+      })
+    } else {
+      cloudinary.uploader.upload(file.path)
+        .then((result) => {
+          const tempObj = {
+            publisherId: req.token.id,
+            backgroundImgPath: result.secure_url,
+            question: question,
+            expiryDate: expiryDate,
+            answerStates: answerStates,
+            totalSubmission: totalSubmission
+          }
+          pollData.insertMany(tempObj, (err, result) => {
+            if (err) {
+              res.send({ error: 'Something went wrong!!' })
+            } else {
+              res.send({ message: 'Poll Published' })
+            }
+          })
+        }
+        )
+        .catch((err) => {
+          if (err) {
+            res.send({ error: 'Something went wrong!!' })
+          }
+        })
+    }
   } catch (error) {
     return {}
   }

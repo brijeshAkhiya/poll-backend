@@ -2,12 +2,15 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const app = express()
-app.use(express.urlencoded())
+// app.use(express.urlencoded())
 app.use(cors())
 const route = require('./app/Routes')
-app.use(bodyParser.urlencoded({ extended: false }))
+// eslint-disable-next-line no-path-concat
+app.use(express.static('./public'))
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use('/', route)
+
 app.get('/', (req, res) => {
   // eslint-disable-next-line no-path-concat
   res.sendFile(__dirname + '/index.html')
