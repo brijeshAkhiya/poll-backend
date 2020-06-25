@@ -9,7 +9,12 @@ controllers.getAdminPollData = (req, res) => {
   let date = new Date()
   date = date.toISOString().slice(0, 10)
   try {
-    pollData.deleteMany({ expiryDate: date })
+    pollData.deleteMany({ expiryDate: date }, (err, result) => {
+      if (err) {
+        res.send({ error: 'Something went wrong!' })
+      } else {
+      }
+    })
     const query = [{
       $match: {
         publisherId: req.token.id
