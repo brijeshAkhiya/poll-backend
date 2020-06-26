@@ -167,4 +167,66 @@ controllers.deletePoll = (req, res) => {
   }
 }
 
+controllers.editPoll = (req,res) => {
+  try {
+    const pollId = req.body.pollId
+    let file = req.file
+    const question = req.body.sQuestion
+    let option = req.body.options
+    option = option.split(',')
+    const expiryDate = req.body.dDate
+    const answerStates = []
+    const totalSubmission = 0
+    // This is for formatting according to schema
+    for (const values in option) {
+      const tempObj1 = { option: option[values], submission: 0, percentage: 0 }
+      answerStates.push(tempObj1)
+    }
+    if (req.body.file) {
+      file = req.body.file
+      const tempObj = { $set: {
+        publisherId: req.token.id,
+        backgroundImgPath: file,
+        question: question,
+        expiryDate: expiryDate,
+        answerStates: answerStates,
+        totalSubmission: totalSubmission
+      } }
+      pollData.findOneAndUpdate({pollId},tempObj,(err,result) =>{
+        if (err) {
+          res.send({ error: 'Something went wrong!!' })
+        } else {
+          res.send({ message: 'Poll Updated' })
+        }
+      })
+    } else {
+      cloudinary.uploader.upload(file.path)
+        .then((result) => {
+          const tempObj = { $set: {
+            publisherId: req.token.id,
+            backgroundImgPath: result.secure_url,
+            question: question,
+            expiryDate: expiryDate,
+            answerStates: answerStates,
+            totalSubmission: totalSubmission
+          } } 
+          pollData.findOneAndUpdate({pollId},tempObj,(err,result) =>{
+            if (err) {
+              res.send({ error: 'Something went wrong!!' })
+            } else {
+              res.send({ message: 'Poll Updated' })
+            }
+          })
+        }
+        )
+        .catch((err) => {
+          if (err) {
+            res.send({ error: 'Something went wrong!!' })
+          }
+        })
+    }
+  } catch (error) {
+    return {}
+  }
+}
 module.exports = controllers
