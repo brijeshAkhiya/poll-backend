@@ -7,5 +7,5 @@ const upload = multer({ storage })
 router.get('/getAdminPollData', middleware.verifyToken, controller.getAdminPollData)
 router.post('/publishPoll', middleware.verifyToken, upload.single('file'), controller.publishPoll)
 router.post('/deletePoll', controller.deletePoll)
-router.post('/editPoll',middleware.verifyToken, upload.single('file'), controller.editPoll)
+router.post('/editPoll', middleware.verifyToken, upload.single('file'), controller.editPoll)
 module.exports = router

@@ -172,7 +172,7 @@ controllers.deletePoll = (req, res) => {
   }
 }
 
-controllers.editPoll = (req,res) => {
+controllers.editPoll = (req, res) => {
   try {
     const pollId = req.body.pollId
     let file = req.file
@@ -189,15 +189,17 @@ controllers.editPoll = (req,res) => {
     }
     if (req.body.file) {
       file = req.body.file
-      const tempObj = { $set: {
-        publisherId: req.token.id,
-        backgroundImgPath: file,
-        question: question,
-        expiryDate: expiryDate,
-        answerStates: answerStates,
-        totalSubmission: totalSubmission
-      } }
-      pollData.findOneAndUpdate({pollId},tempObj,(err,result) =>{
+      const tempObj = {
+        $set: {
+          publisherId: req.token.id,
+          backgroundImgPath: file,
+          question: question,
+          expiryDate: expiryDate,
+          answerStates: answerStates,
+          totalSubmission: totalSubmission
+        }
+      }
+      pollData.findOneAndUpdate({ pollId }, tempObj, (err, result) => {
         if (err) {
           res.send({ error: 'Something went wrong!!' })
         } else {
@@ -207,15 +209,17 @@ controllers.editPoll = (req,res) => {
     } else {
       cloudinary.uploader.upload(file.path)
         .then((result) => {
-          const tempObj = { $set: {
-            publisherId: req.token.id,
-            backgroundImgPath: result.secure_url,
-            question: question,
-            expiryDate: expiryDate,
-            answerStates: answerStates,
-            totalSubmission: totalSubmission
-          } } 
-          pollData.findOneAndUpdate({pollId},tempObj,(err,result) =>{
+          const tempObj = {
+            $set: {
+              publisherId: req.token.id,
+              backgroundImgPath: result.secure_url,
+              question: question,
+              expiryDate: expiryDate,
+              answerStates: answerStates,
+              totalSubmission: totalSubmission
+            }
+          }
+          pollData.findOneAndUpdate({ pollId }, tempObj, (err, result) => {
             if (err) {
               res.send({ error: 'Something went wrong!!' })
             } else {
