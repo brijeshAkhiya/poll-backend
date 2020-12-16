@@ -5,7 +5,7 @@
         "node": true
     },
     "extends": [
-        "standard"
+        "google"
     ],
     "globals": {
         "Atomics": "readonly",
@@ -15,5 +15,8 @@
         "ecmaVersion": 2018
     },
     "rules": {
+        "semi":"error",
+        "object-curly-spacing": "off",
+        "max-len": ["error", { "code": 140 }]
     }
 }
